@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { AppLogo } from './AppLogo';
 import {
   FileText,
   Eye,
@@ -55,11 +56,7 @@ export const Header: React.FC = () => {
               onClick={() => setActiveTab('dashboard')}
               className="flex items-center gap-2.5 text-left group"
             >
-              <img
-                src="/src/assets/images/dipandu_logo_emblem_1790340317534.jpg"
-                alt="Logo DiPandu"
-                className="w-9 h-9 rounded-lg object-cover ring-1 ring-slate-200 group-hover:ring-blue-600 transition"
-              />
+              <AppLogo className="w-9 h-9" />
               <div>
                 <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-blue-700 transition">
                   DiPandu
@@ -101,7 +98,14 @@ export const Header: React.FC = () => {
                 >
                   <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-semibold overflow-hidden shrink-0">
                     {currentUser.avatar ? (
-                      <img src={currentUser.avatar} alt={currentUser.nama} className="w-full h-full object-cover" />
+                      <img
+                        src={currentUser.avatar}
+                        alt={currentUser.nama}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = 'none';
+                        }}
+                      />
                     ) : (
                       currentUser.nama.slice(0, 2).toUpperCase()
                     )}

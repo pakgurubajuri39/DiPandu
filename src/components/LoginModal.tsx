@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { AppLogo } from './AppLogo';
 import { ShieldCheck, Lock, User, AlertCircle, ArrowRight } from 'lucide-react';
 
 export const LoginModal: React.FC = () => {
@@ -38,12 +39,8 @@ export const LoginModal: React.FC = () => {
       <div className="max-w-md w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
         {/* Brand Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex p-3 bg-blue-50 rounded-2xl mb-4 border border-blue-100">
-            <img
-              src="/src/assets/images/dipandu_logo_emblem_1790340317534.jpg"
-              alt="DiPandu"
-              className="w-14 h-14 rounded-xl object-cover"
-            />
+          <div className="inline-flex mb-3">
+            <AppLogo className="w-16 h-16 rounded-2xl" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             Masuk ke DiPandu

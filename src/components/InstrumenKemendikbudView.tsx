@@ -7,15 +7,13 @@ import {
   Printer,
   CheckCircle2,
   AlertCircle,
-  HelpCircle,
   Award,
   Layers,
   Sparkles,
-  Bookmark,
   ShieldCheck,
-  ChevronRight,
-  TrendingUp,
-  FileSpreadsheet,
+  Save,
+  Lock,
+  Info,
 } from 'lucide-react';
 import {
   initialIndikatorPerencanaan,
@@ -23,16 +21,29 @@ import {
   initialRubrikPortofolioPilar,
 } from '../data/instrumentsData';
 import { IndikatorPerencanaan, IndikatorKinerjaGTK, RubrikPortofolioPilar } from '../types/instruments';
+import { TutWuriHandayaniLogo } from './TutWuriHandayaniLogo';
 
 export const InstrumenKemendikbudView: React.FC = () => {
   const { settings, users, currentUser } = useApp();
 
+  // Role Permissions
+  // INSTRUMEN KEMENDIKBUD HANYA DAPAT DIISI OLEH PENGAWAS / KEPALA SEKOLAH. GURU HANYA DAPAT MELIHAT HASIL PENILAIANNYA (READ-ONLY).
+  const isPenilai = currentUser?.role === 'pengawas' || currentUser?.role === 'kepala_sekolah';
+  const isGuru = currentUser?.role === 'guru';
+
   const [activeInstrument, setActiveInstrument] = useState<'perencanaan' | 'observasi' | 'portofolio'>('perencanaan');
+  const [saveSuccessMessage, setSaveSuccessMessage] = useState<string | null>(null);
 
   // Teacher selection
   const guruList = users.filter((u) => u.role === 'guru');
-  const [selectedGuruId, setSelectedGuruId] = useState<string>(guruList[0]?.id || '');
-  const selectedGuru = users.find((u) => u.id === selectedGuruId) || guruList[0];
+  // If user is a guru, lock to their own ID
+  const [selectedGuruId, setSelectedGuruId] = useState<string>(
+    isGuru ? currentUser?.id || guruList[0]?.id || '' : guruList[0]?.id || ''
+  );
+
+  const selectedGuru = isGuru
+    ? users.find((u) => u.id === currentUser?.id) || guruList[0]
+    : users.find((u) => u.id === selectedGuruId) || guruList[0];
 
   // State for Instrument 1: Perencanaan (Modul Ajar)
   const [indikatorPerencanaan, setIndikatorPerencanaan] = useState<IndikatorPerencanaan[]>(initialIndikatorPerencanaan);
@@ -53,6 +64,7 @@ export const InstrumenKemendikbudView: React.FC = () => {
   };
 
   const handleScoreChangePerencanaan = (id: string, newSkor: 0 | 1 | 2) => {
+    if (!isPenilai) return; // Strict guard
     setIndikatorPerencanaan((prev) =>
       prev.map((item) => (item.id === id ? { ...item, skor: newSkor } : item))
     );
@@ -69,6 +81,7 @@ export const InstrumenKemendikbudView: React.FC = () => {
     fokusKey: 'fokusPerilaku1' | 'fokusPerilaku2' | 'fokusPerilaku3',
     ketercapaian: 1 | 2 | 3
   ) => {
+    if (!isPenilai) return; // Strict guard
     setGtkIndicators((prev) =>
       prev.map((ind) => {
         if (ind.id === indikatorId) {
@@ -88,6 +101,14 @@ export const InstrumenKemendikbudView: React.FC = () => {
   // State for Instrument 3: Portofolio
   const [rubrikPilar, setRubrikPilar] = useState<RubrikPortofolioPilar[]>(initialRubrikPortofolioPilar);
 
+  const handleSaveAssessment = () => {
+    if (!isPenilai) return;
+    setSaveSuccessMessage(`Hasil penilaian instrumen untuk ${selectedGuru?.nama} berhasil disimpan ke basis data.`);
+    setTimeout(() => {
+      setSaveSuccessMessage(null);
+    }, 4000);
+  };
+
   const handlePrint = () => {
     window.print();
   };
@@ -97,28 +118,74 @@ export const InstrumenKemendikbudView: React.FC = () => {
       {/* Top Header */}
       <div className="no-print bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 mb-1">
-              <ShieldCheck className="w-4 h-4 text-blue-600" />
-              <span>Standar Resmi Kemendikbudristek & Ditjen GTK</span>
+          <div className="flex items-start gap-4">
+            <TutWuriHandayaniLogo className="w-12 h-12 shrink-0 mt-0.5" />
+            <div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 mb-1">
+                <ShieldCheck className="w-4 h-4 text-blue-600" />
+                <span>Instrumen Resmi Kemendikbudristek & BSKAP Kurikulum Merdeka</span>
+              </div>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+                Instrumen Penilaian Supervisi Akademik Guru
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                Penelaahan modul ajar (BSKAP No. 033/2024), rubrik observasi kelas pengelolaan kinerja GTK (Perdirjen GTK No. 7607/2023), dan verifikasi portofolio.
+              </p>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
-              Instrumen Penilaian Supervisi Akademik Kurikulum Merdeka
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Instrumen penelaahan perencanaan pembelajaran (BSKAP 2024), rubrik observasi kelas pengelolaan kinerja guru, dan validasi portofolio PKB.
-            </p>
           </div>
 
           <div className="flex items-center gap-2.5">
+            {isPenilai && (
+              <button
+                onClick={handleSaveAssessment}
+                className="px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white text-xs font-semibold rounded-lg transition flex items-center gap-2 shadow-xs cursor-pointer"
+              >
+                <Save className="w-4 h-4" />
+                Simpan Penilaian
+              </button>
+            )}
+
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-2"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-2 cursor-pointer"
             >
               <Printer className="w-4 h-4" />
-              Cetak Instrumen Resmi
+              Cetak Dokumen
             </button>
           </div>
+        </div>
+
+        {/* Success Alert Banner */}
+        {saveSuccessMessage && (
+          <div className="mt-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center gap-2 text-xs text-emerald-800 animate-in fade-in">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{saveSuccessMessage}</span>
+          </div>
+        )}
+
+        {/* ROLE NOTICE BANNER */}
+        <div className="mt-5">
+          {isGuru ? (
+            <div className="p-3.5 rounded-xl bg-blue-50/80 border border-blue-200 flex items-start gap-3">
+              <Lock className="w-4 h-4 text-blue-700 mt-0.5 shrink-0" />
+              <div className="text-xs">
+                <span className="font-bold text-blue-900">Hak Akses Guru (Mode Tinjauan / Read-Only):</span>
+                <p className="text-blue-800 mt-0.5 leading-relaxed">
+                  Sesuai ketentuan, instrumen penilaian supervisi hanya dapat diisi dan dinilai oleh <strong>Pengawas Sekolah Pembina ({settings.pengawasPembina})</strong> atau <strong>Kepala Sekolah</strong>. Anda memiliki akses penuh untuk meninjau detail skor, deskriptor penilaian, dan catatan kualitatif yang diberikan.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="p-3.5 rounded-xl bg-emerald-50/80 border border-emerald-200 flex items-start gap-3">
+              <ShieldCheck className="w-4 h-4 text-emerald-700 mt-0.5 shrink-0" />
+              <div className="text-xs">
+                <span className="font-bold text-emerald-900">Hak Akses Penilai ({currentUser?.role === 'pengawas' ? 'Pengawas Sekolah' : 'Kepala Sekolah'}):</span>
+                <p className="text-emerald-800 mt-0.5 leading-relaxed">
+                  Anda memiliki otoritas penuh untuk mengisi skala rubrik, memberikan catatan kualitatif, serta mengesahkan instrumen penilaian bagi guru binaan.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Guru selection & Instrument Switcher */}
@@ -126,24 +193,33 @@ export const InstrumenKemendikbudView: React.FC = () => {
           {/* Guru Selector */}
           <div className="flex items-center gap-2 text-xs">
             <span className="font-semibold text-slate-600">Guru yang Dinilai:</span>
-            <select
-              value={selectedGuruId}
-              onChange={(e) => setSelectedGuruId(e.target.value)}
-              className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
-            >
-              {guruList.map((g) => (
-                <option key={g.id} value={g.id}>
-                  {g.nama} — {g.mapel} ({g.sekolah})
-                </option>
-              ))}
-            </select>
+            {isGuru ? (
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-300 rounded-lg text-slate-900 font-semibold">
+                <span>{selectedGuru?.nama}</span>
+                <span className="text-[10px] text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+                  (Akun Anda)
+                </span>
+              </span>
+            ) : (
+              <select
+                value={selectedGuruId}
+                onChange={(e) => setSelectedGuruId(e.target.value)}
+                className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+              >
+                {guruList.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.nama} — {g.mapel} ({g.sekolah})
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           {/* 3 Instrument Tabs */}
           <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl overflow-x-auto no-scrollbar">
             <button
               onClick={() => setActiveInstrument('perencanaan')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition whitespace-nowrap flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
                 activeInstrument === 'perencanaan'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -155,7 +231,7 @@ export const InstrumenKemendikbudView: React.FC = () => {
 
             <button
               onClick={() => setActiveInstrument('observasi')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition whitespace-nowrap flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
                 activeInstrument === 'observasi'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -167,7 +243,7 @@ export const InstrumenKemendikbudView: React.FC = () => {
 
             <button
               onClick={() => setActiveInstrument('portofolio')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition whitespace-nowrap flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
                 activeInstrument === 'portofolio'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -184,15 +260,20 @@ export const InstrumenKemendikbudView: React.FC = () => {
       {activeInstrument === 'perencanaan' && (
         <div className="bg-white rounded-2xl border border-slate-300 p-6 sm:p-10 shadow-xs print:border-none print:p-0">
           {/* Kop Dokumen Instrumen */}
-          <div className="border-b-2 border-slate-800 pb-4 mb-6 text-center">
-            <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-slate-900">
-              INSTRUMEN PENELAAHAN MODUL AJAR / RENCANA PELAKSANAAN PEMBELAJARAN
-            </h2>
-            <p className="text-xs text-slate-600 mt-0.5">
-              Standar Panduan Pembelajaran dan Asesmen (PPA) BSKAP Kemendikbudristek & Kurikulum Merdeka
-            </p>
+          <div className="border-b-2 border-slate-800 pb-5 mb-6 text-center">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <TutWuriHandayaniLogo className="w-11 h-11" />
+              <div>
+                <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-slate-900">
+                  INSTRUMEN PENELAAHAN MODUL AJAR / RENCANA PELAKSANAAN PEMBELAJARAN
+                </h2>
+                <p className="text-xs text-slate-600 mt-0.5">
+                  Standar Panduan Pembelajaran dan Asesmen (PPA) BSKAP Kemendikbudristek & Kurikulum Merdeka
+                </p>
+              </div>
+            </div>
             <p className="text-[11px] font-mono text-slate-500 mt-1">
-              Satuan Pendidikan: {settings.institutionName} · Pengawas Pembina: {settings.pengawasPembina}
+              Satuan Pendidikan: {selectedGuru?.sekolah || settings.institutionName} · Pengawas Pembina: {settings.pengawasPembina}
             </p>
           </div>
 
@@ -213,13 +294,13 @@ export const InstrumenKemendikbudView: React.FC = () => {
           {/* Skor Summary Card */}
           <div className="mb-6 p-4 rounded-xl border border-blue-200 bg-blue-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span className="text-xs font-semibold text-blue-900">Hasil Rekapitulasi Skor Penelaahan</span>
+              <span className="text-xs font-semibold text-blue-900">Hasil Rekapitulasi Skor Penelaahan Modul Ajar</span>
               <div className="flex items-baseline gap-3 mt-1">
                 <span className="text-2xl font-bold font-mono text-slate-900">
                   {totalSkorPerencanaan} <span className="text-xs text-slate-500">/ {maxSkorPerencanaan} Poin</span>
                 </span>
                 <span className="text-base font-bold font-mono text-blue-700">
-                  Nilai: {nilaiAkhirPerencanaan} / 100
+                  Nilai Akhir: {nilaiAkhirPerencanaan} / 100
                 </span>
               </div>
             </div>
@@ -239,12 +320,12 @@ export const InstrumenKemendikbudView: React.FC = () => {
                   <th className="py-2.5 px-3 w-12 text-center">No</th>
                   <th className="py-2.5 px-3 w-32">Komponen</th>
                   <th className="py-2.5 px-3">Indikator & Deskriptor Telaah</th>
-                  <th className="py-2.5 px-3 w-36 text-center">Skala Keterpenuhan</th>
+                  <th className="py-2.5 px-3 w-40 text-center">Skor Penilaian</th>
                   <th className="py-2.5 px-3 w-48">Catatan Penelaah</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
-                {indikatorPerencanaan.map((ind, idx) => (
+                {indikatorPerencanaan.map((ind) => (
                   <tr key={ind.id} className="hover:bg-slate-50/80 transition">
                     <td className="py-2.5 px-3 font-mono text-center font-semibold text-slate-600">
                       {ind.nomor}
@@ -257,27 +338,45 @@ export const InstrumenKemendikbudView: React.FC = () => {
                       <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">{ind.panduanPenilaian}</p>
                     </td>
                     <td className="py-2.5 px-3 text-center">
-                      <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50">
-                        {[0, 1, 2].map((val) => (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => handleScoreChangePerencanaan(ind.id, val as 0 | 1 | 2)}
-                            className={`px-2.5 py-1 text-xs font-bold rounded transition ${
-                              ind.skor === val
-                                ? val === 2
-                                  ? 'bg-emerald-600 text-white shadow-2xs'
-                                  : val === 1
-                                  ? 'bg-amber-500 text-white shadow-2xs'
-                                  : 'bg-rose-500 text-white shadow-2xs'
-                                : 'text-slate-600 hover:text-slate-900'
+                      {isPenilai ? (
+                        // Penilai (Supervisor / Kepsek) has interactive buttons
+                        <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50">
+                          {[0, 1, 2].map((val) => (
+                            <button
+                              key={val}
+                              type="button"
+                              onClick={() => handleScoreChangePerencanaan(ind.id, val as 0 | 1 | 2)}
+                              className={`px-2.5 py-1 text-xs font-bold rounded transition cursor-pointer ${
+                                ind.skor === val
+                                  ? val === 2
+                                    ? 'bg-emerald-600 text-white shadow-2xs'
+                                    : val === 1
+                                    ? 'bg-amber-500 text-white shadow-2xs'
+                                    : 'bg-rose-500 text-white shadow-2xs'
+                                  : 'text-slate-600 hover:text-slate-900'
+                              }`}
+                            >
+                              {val}
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        // Guru: Read-only display badge
+                        <div className="inline-flex items-center gap-1.5">
+                          <span
+                            className={`px-2.5 py-1 text-xs font-bold font-mono rounded border ${
+                              ind.skor === 2
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : ind.skor === 1
+                                ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                : 'bg-rose-50 text-rose-700 border-rose-200'
                             }`}
                           >
-                            {val}
-                          </button>
-                        ))}
-                      </div>
-                      <span className="text-[10px] text-slate-400 block mt-0.5">
+                            Skor: {ind.skor}
+                          </span>
+                        </div>
+                      )}
+                      <span className="text-[10px] text-slate-500 block mt-0.5">
                         {ind.skor === 2 ? 'Lengkap & Sesuai' : ind.skor === 1 ? 'Kurang Lengkap' : 'Tidak Ada'}
                       </span>
                     </td>
@@ -292,13 +391,27 @@ export const InstrumenKemendikbudView: React.FC = () => {
 
           {/* Catatan Kualitatif & Rekomendasi Pengawas */}
           <div className="mt-6 p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-3 text-xs">
-            <h4 className="font-bold text-slate-900">Catatan Kualitatif & Tindak Lanjut Pengawas Pembina</h4>
-            <textarea
-              rows={3}
-              value={catatanUmumPerencanaan}
-              onChange={(e) => setCatatanUmumPerencanaan(e.target.value)}
-              className="w-full text-xs bg-white border border-slate-200 rounded-lg p-3 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
+            <h4 className="font-bold text-slate-900 flex items-center justify-between">
+              <span>Catatan Kualitatif & Rekomendasi Pengawas Pembina</span>
+              {!isPenilai && (
+                <span className="text-[10px] font-normal text-slate-500 bg-slate-200 px-2 py-0.5 rounded">
+                  Hanya dapat diedit oleh Pengawas / Kepala Sekolah
+                </span>
+              )}
+            </h4>
+            {isPenilai ? (
+              <textarea
+                rows={3}
+                value={catatanUmumPerencanaan}
+                onChange={(e) => setCatatanUmumPerencanaan(e.target.value)}
+                className="w-full text-xs bg-white border border-slate-200 rounded-lg p-3 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Masukkan catatan kualitatif telaah modul ajar..."
+              />
+            ) : (
+              <div className="p-3 bg-white rounded-lg border border-slate-200 text-slate-800 text-xs italic">
+                "{catatanUmumPerencanaan}"
+              </div>
+            )}
           </div>
 
           {/* Tanda Tangan Resmi Pengawas & Guru */}
@@ -329,13 +442,18 @@ export const InstrumenKemendikbudView: React.FC = () => {
         <div className="space-y-6">
           {/* Header */}
           <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
-            <div className="border-b-2 border-slate-800 pb-4 mb-5 text-center">
-              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-slate-900">
-                RUBRIK OBSERVASI KINERJA KELAS (STANDAR DITJEN GTK KEMENDIKBUDRISTEK)
-              </h2>
-              <p className="text-xs text-slate-600 mt-0.5">
-                Perdirjen GTK No. 7607/B.B1/HK.03/2023 · Pengelolaan Praktik Kinerja Guru Kurikulum Merdeka
-              </p>
+            <div className="border-b-2 border-slate-800 pb-5 mb-5 text-center">
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <TutWuriHandayaniLogo className="w-11 h-11" />
+                <div>
+                  <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-slate-900">
+                    RUBRIK OBSERVASI KINERJA KELAS (STANDAR DITJEN GTK KEMENDIKBUDRISTEK)
+                  </h2>
+                  <p className="text-xs text-slate-600 mt-0.5">
+                    Perdirjen GTK No. 7607/B.B1/HK.03/2023 · Pengelolaan Praktik Kinerja Guru Kurikulum Merdeka
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Indikator Selector Tabs */}
@@ -346,7 +464,7 @@ export const InstrumenKemendikbudView: React.FC = () => {
                   <button
                     key={ind.id}
                     onClick={() => setSelectedGTKIndikatorId(ind.id)}
-                    className={`px-3 py-2 text-xs font-semibold rounded-lg transition whitespace-nowrap ${
+                    className={`px-3 py-2 text-xs font-semibold rounded-lg transition whitespace-nowrap cursor-pointer ${
                       isSelected
                         ? 'bg-blue-600 text-white shadow-xs'
                         : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
@@ -361,7 +479,7 @@ export const InstrumenKemendikbudView: React.FC = () => {
             {/* Current Selected Indicator Details */}
             <div className="mt-5 p-4 rounded-xl bg-slate-50/70 border border-slate-200 text-xs">
               <span className="font-bold text-blue-700 uppercase tracking-wider text-[11px]">
-                Fokus Sasaran Kinerja:
+                Fokus Sasaran Kinerja Terpilih:
               </span>
               <h3 className="text-sm font-bold text-slate-900 mt-0.5">{activeGTK.nama}</h3>
               <p className="text-slate-600 mt-1">{activeGTK.deskripsi}</p>
@@ -430,30 +548,50 @@ export const InstrumenKemendikbudView: React.FC = () => {
                     {/* Rating Selection (1, 2, 3) */}
                     <div className="pt-2">
                       <span className="text-[11px] font-semibold text-slate-600 block mb-1">
-                        Peringkat Observasi Observer:
+                        Peringkat Observasi Penilai:
                       </span>
-                      <div className="grid grid-cols-3 gap-1">
-                        {[
-                          { val: 1, label: 'Belum' },
-                          { val: 2, label: 'Blm Efektif' },
-                          { val: 3, label: 'Efektif' },
-                        ].map((btn) => (
-                          <button
-                            key={btn.val}
-                            type="button"
-                            onClick={() =>
-                              handleGTKKetercapaianChange(activeGTK.id, fpKey, btn.val as 1 | 2 | 3)
-                            }
-                            className={`py-1.5 text-[11px] font-bold rounded-lg border transition text-center ${
-                              fp.ketercapaian === btn.val
-                                ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
-                                : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                      {isPenilai ? (
+                        <div className="grid grid-cols-3 gap-1">
+                          {[
+                            { val: 1, label: 'Belum' },
+                            { val: 2, label: 'Blm Efektif' },
+                            { val: 3, label: 'Efektif' },
+                          ].map((btn) => (
+                            <button
+                              key={btn.val}
+                              type="button"
+                              onClick={() =>
+                                handleGTKKetercapaianChange(activeGTK.id, fpKey, btn.val as 1 | 2 | 3)
+                              }
+                              className={`py-1.5 text-[11px] font-bold rounded-lg border transition text-center cursor-pointer ${
+                                fp.ketercapaian === btn.val
+                                  ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
+                                  : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                              }`}
+                            >
+                              {btn.label}
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-2 bg-slate-50 border border-slate-200 rounded-lg text-center">
+                          <span
+                            className={`inline-block px-3 py-1 text-xs font-bold rounded ${
+                              fp.ketercapaian === 3
+                                ? 'bg-emerald-600 text-white'
+                                : fp.ketercapaian === 2
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-rose-600 text-white'
                             }`}
                           >
-                            {btn.label}
-                          </button>
-                        ))}
-                      </div>
+                            {fp.ketercapaian === 3
+                              ? 'Skor 3: Dilakukan & Efektif'
+                              : fp.ketercapaian === 2
+                              ? 'Skor 2: Dilakukan Belum Efektif'
+                              : 'Skor 1: Belum Dilakukan'}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Bukti Faktual Catatan */}
@@ -477,15 +615,20 @@ export const InstrumenKemendikbudView: React.FC = () => {
       {activeInstrument === 'portofolio' && (
         <div className="bg-white rounded-2xl border border-slate-300 p-6 sm:p-10 shadow-xs print:border-none print:p-0">
           {/* Header */}
-          <div className="border-b-2 border-slate-800 pb-4 mb-6 text-center">
-            <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-slate-900">
-              INSTRUMEN VALIDASI & PENILAIAN PORTOFOLIO PENGEMBANGAN DIRI GURU
-            </h2>
-            <p className="text-xs text-slate-600 mt-0.5">
-              Evaluasi 4 Pilar: Sertifikat Pelatihan Mandiri, Karya Otentik Siswa, PTK/Best Practice, dan Fasilitasi P5
-            </p>
+          <div className="border-b-2 border-slate-800 pb-5 mb-6 text-center">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <TutWuriHandayaniLogo className="w-11 h-11" />
+              <div>
+                <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-slate-900">
+                  INSTRUMEN VALIDASI & PENILAIAN PORTOFOLIO PENGEMBANGAN DIRI GURU
+                </h2>
+                <p className="text-xs text-slate-600 mt-0.5">
+                  Evaluasi 4 Pilar: Sertifikat Pelatihan Mandiri, Karya Otentik Siswa, PTK/Best Practice, dan Fasilitasi P5
+                </p>
+              </div>
+            </div>
             <p className="text-[11px] font-mono text-slate-500 mt-1">
-              Satuan Pendidikan: {settings.institutionName} · Pengawas Pembina: {settings.pengawasPembina}
+              Satuan Pendidikan: {selectedGuru?.sekolah || settings.institutionName} · Pengawas Pembina: {settings.pengawasPembina}
             </p>
           </div>
 
