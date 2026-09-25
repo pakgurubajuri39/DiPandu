@@ -3,6 +3,9 @@ import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import * as XLSX from 'xlsx';
+import { createSupervisionReportPDF } from './src/services/pdfGenerator';
+import { createRekapSupervisiWorkbook } from './src/services/excelGenerator';
 
 dotenv.config();
 
@@ -777,6 +780,64 @@ app.get('/api/reports/rekap', (req, res) => {
   };
 
   res.json({ success: true, rekap });
+});
+
+// Endpoint Unduh Laporan Individual Hasil Supervisi Akademik (PDF)
+// Menghasilkan dokumen resmi lengkap dengan garansi binary download tanpa file kosong
+app.get('/api/reports/pdf', (req, res) => {
+  try {
+    const { guruId, inline } = req.query;
+    let guru = state.users.find((u) => u.id === guruId && u.role === 'guru');
+    if (!guru) {
+      guru = state.users.find((u) => u.role === 'guru') || state.users[2];
+    }
+
+    const obs = state.observasi.find((o) => o.guruId === guru.id);
+    const per = state.perencanaan.filter((p) => p.guruId === guru.id);
+    const tl = state.tindakLanjut.filter((t) => t.guruId === guru.id);
+    const port = state.portofolio.filter((p) => p.guruId === guru.id);
+
+    const doc = createSupervisionReportPDF(guru, obs, per, tl, port, state.settings);
+    const arrayBuffer = doc.output('arraybuffer');
+    const buffer = Buffer.from(arrayBuffer);
+
+    const cleanFileName = `Laporan_Supervisi_${guru.nama.replace(/[^a-zA-Z0-9]/g, '_')}_${state.settings.tahunAjaranAktif.replace('/', '-')}.pdf`;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `${inline === 'true' ? 'inline' : 'attachment'}; filename="${cleanFileName}"`);
+    res.setHeader('Content-Length', buffer.length);
+    res.setHeader('Cache-Control', 'no-cache');
+    res.send(buffer);
+  } catch (err: any) {
+    console.error('Error generating PDF report:', err);
+    res.status(500).json({ success: false, message: 'Gagal membuat laporan PDF: ' + err.message });
+  }
+});
+
+// Endpoint Unduh Rekapitulasi Supervisi Pengawas (Excel Spreadsheet .xlsx)
+app.get('/api/reports/excel', (req, res) => {
+  try {
+    const wb = createRekapSupervisiWorkbook(
+      state.users,
+      state.observasi,
+      state.perencanaan,
+      state.tindakLanjut,
+      state.portofolio,
+      state.sekolahBinaan,
+      state.settings
+    );
+    const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    const fileName = `Rekapitulasi_Supervisi_Pengawas_${state.settings.tahunAjaranAktif.replace('/', '-')}.xlsx`;
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.setHeader('Content-Length', buffer.length);
+    res.setHeader('Cache-Control', 'no-cache');
+    res.send(buffer);
+  } catch (err: any) {
+    console.error('Error generating Excel report:', err);
+    res.status(500).json({ success: false, message: 'Gagal mengekspor rekap Excel: ' + err.message });
+  }
 });
 
 // Kurikulum Merdeka Material Generator API (Aligned with system specification)

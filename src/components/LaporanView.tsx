@@ -73,11 +73,11 @@ export const LaporanView: React.FC = () => {
     return { label: 'Kurang (D)', color: 'text-rose-700 bg-rose-50 border-rose-200' };
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (!selectedGuru) return;
     setIsExportingPDF(true);
     try {
-      pdfGenerator.generateIndividualReport(
+      await pdfGenerator.generateIndividualReport(
         selectedGuru,
         targetObservasi,
         targetPerencanaan,
@@ -92,6 +92,11 @@ export const LaporanView: React.FC = () => {
     } finally {
       setIsExportingPDF(false);
     }
+  };
+
+  const handleOpenPDFInNewTab = () => {
+    if (!selectedGuru) return;
+    pdfGenerator.openReportInNewTab(selectedGuru.id);
   };
 
   const handlePrint = () => {
@@ -138,6 +143,16 @@ export const LaporanView: React.FC = () => {
                   <span>{isExportingPDF ? 'Menyiapkan...' : 'Unduh Laporan Supervisi (PDF)'}</span>
                 </>
               )}
+            </button>
+
+            {/* Direct Open in New Tab Button */}
+            <button
+              onClick={handleOpenPDFInNewTab}
+              title="Buka laporan PDF di tab baru peramban untuk pratinjau langsung"
+              className="px-3.5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-800 text-xs font-semibold rounded-lg border border-blue-200 transition flex items-center gap-2 cursor-pointer"
+            >
+              <FileText className="w-4 h-4 text-blue-700" />
+              <span>Buka PDF di Tab Baru</span>
             </button>
 
             <button
