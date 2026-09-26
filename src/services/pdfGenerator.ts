@@ -21,7 +21,7 @@ export function createSupervisionReportPDF(
     format: 'a4',
   });
 
-  const institution = guru.sekolah || settings.institutionName || 'SMA Genesis Medicare';
+  const institution = guru.sekolah || settings.institutionName || 'Sekolah Binaan H. Kusnandar, M.Si';
   const pengawasName = observasi?.supervisorNama || settings.pengawasPembina || 'H. Kusnandar, M.Si';
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -97,7 +97,7 @@ export function createSupervisionReportPDF(
   doc.setFontSize(7);
   doc.setTextColor(71, 85, 105); // slate-600
   doc.text(
-    'Jl. Raya Gas Alam No. 39, Cimanggis, Kota Depok | Telp. (021) 87754321 | Laman: genesis-medicare.sch.id',
+    'Wilayah Pembinaan Pengawas SMA Cabang Dinas Pendidikan Wilayah II Jawa Barat | Telp. (021) 87754321',
     margin + 17,
     y + 12.5
   );
@@ -165,7 +165,7 @@ export function createSupervisionReportPDF(
   y += 4.5;
 
   doc.text(`Mata Pelajaran       : ${guru.mapel}`, col1, y);
-  doc.text(`Kepala Sekolah       : Dr. Hj. Siti Nurhasanah, M.Pd`, col2, y);
+  doc.text(`Asal Sekolah Binaan : ${institution}`, col2, y);
   y += 4.5;
 
   doc.text(`Satuan Pendidikan  : ${institution}`, col1, y);
@@ -708,7 +708,7 @@ export const pdfGenerator = {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.setTextColor(15, 23, 42);
-    doc.text((settings.institutionName || 'SMA Genesis Medicare').toUpperCase(), pageWidth / 2, y, { align: 'center' });
+    doc.text((settings.institutionName || 'Sekolah Binaan H. Kusnandar, M.Si').toUpperCase(), pageWidth / 2, y, { align: 'center' });
     y += 6;
 
     doc.setFontSize(11);

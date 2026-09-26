@@ -216,10 +216,10 @@ export const LaporanView: React.FC = () => {
                 {selectedGuru?.sekolah || settings.institutionName}
               </h2>
               <p className="text-[11px] text-slate-600 mt-0.5 leading-tight">
-                Jl. Raya Gas Alam No. 39, Curug, Kec. Cimanggis, Kota Depok, Jawa Barat 16453
+                Wilayah Pembinaan Pengawas SMA · Cabang Dinas Pendidikan Wilayah II Jawa Barat
               </p>
               <p className="text-[10px] text-slate-500 font-mono">
-                Telepon: (021) 87754321 · Laman: https://genesis-medicare.sch.id · Surel: supervisi@genesis-medicare.sch.id
+                Telepon: (021) 87754321 · Laman: https://disdik.jabarprov.go.id · Surel: pengawas.sma@jabarprov.go.id
               </p>
             </div>
 
@@ -278,12 +278,16 @@ export const LaporanView: React.FC = () => {
               <span className="text-slate-800">: {selectedGuru?.mapel}</span>
             </div>
             <div className="flex justify-between sm:justify-start sm:gap-4">
-              <span className="text-slate-500 w-36">Kepala Sekolah</span>
-              <span className="text-slate-800">: Dr. Hj. Siti Nurhasanah, M.Pd</span>
+              <span className="text-slate-500 w-36">Asal Sekolah Binaan</span>
+              <span className="font-bold text-indigo-900">: {selectedGuru?.sekolah || settings.institutionName}</span>
             </div>
             <div className="flex justify-between sm:justify-start sm:gap-4">
               <span className="text-slate-500 w-36">Satuan Pendidikan</span>
               <span className="text-slate-800">: {selectedGuru?.sekolah || settings.institutionName}</span>
+            </div>
+            <div className="flex justify-between sm:justify-start sm:gap-4">
+              <span className="text-slate-500 w-36">Kepala Sekolah</span>
+              <span className="text-slate-800">: Dr. Hj. Siti Nurhasanah, M.Pd</span>
             </div>
             <div className="flex justify-between sm:justify-start sm:gap-4">
               <span className="text-slate-500 w-36">Tanggal Pelaksanaan</span>

@@ -97,7 +97,7 @@ export const DashboardView: React.FC = () => {
 
   // Recharts Data 2: Distribusi Status Penyelesaian Supervisi Sekolah Binaan
   const schoolStatusData = sekolahBinaan.map((sek) => {
-    const isTargetSekolah = sek.nama === 'SMA Genesis Medicare';
+    const isTargetSekolah = sek.nama === settings.institutionName || sek.nama.includes('Mandiri');
     const total = sek.jumlahGuru;
     const selesai = isTargetSekolah ? 24 : Math.round(total * 0.65);
     const proses = isTargetSekolah ? 6 : Math.round(total * 0.25);
@@ -675,6 +675,7 @@ export const DashboardView: React.FC = () => {
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-600">
                     <th className="py-2.5 px-3 font-semibold">Nama Guru</th>
+                    <th className="py-2.5 px-3 font-semibold">Asal Sekolah Binaan</th>
                     <th className="py-2.5 px-3 font-semibold">Mata Pelajaran</th>
                     <th className="py-2.5 px-3 font-semibold">Dokumen Perencanaan</th>
                     <th className="py-2.5 px-3 font-semibold">Jadwal / Skor Observasi</th>
@@ -696,6 +697,12 @@ export const DashboardView: React.FC = () => {
                           <td className="py-3 px-3">
                             <span className="font-semibold text-slate-900 block">{guru.nama}</span>
                             <span className="text-[11px] text-slate-500 font-mono">NIP: {guru.nip}</span>
+                          </td>
+                          <td className="py-3 px-3">
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-900 bg-indigo-50/80 px-2 py-0.5 rounded border border-indigo-200/60">
+                              <School className="w-3 h-3 text-indigo-600 shrink-0" />
+                              <span className="truncate max-w-[150px]">{guru.sekolah || settings.institutionName}</span>
+                            </span>
                           </td>
                           <td className="py-3 px-3 text-slate-700">{guru.mapel}</td>
                           <td className="py-3 px-3">

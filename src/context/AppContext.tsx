@@ -40,10 +40,14 @@ interface AppContextType {
   addPortofolio: (data: Partial<Portofolio>) => Promise<boolean>;
   deletePortofolio: (id: string) => Promise<boolean>;
   createUser: (data: Partial<User>) => Promise<boolean>;
+  registerGuru: (data: Partial<User>) => Promise<{ success: boolean; message?: string }>;
+  addSekolahBinaan: (data: Partial<SekolahBinaan>) => Promise<boolean>;
+  updateSekolahBinaan: (id: string, data: Partial<SekolahBinaan>) => Promise<boolean>;
+  deleteSekolahBinaan: (id: string) => Promise<boolean>;
 }
 
 const defaultSettings: AppSettings = {
-  institutionName: 'SMA Genesis Medicare',
+  institutionName: 'Sekolah Binaan H. Kusnandar, M.Si',
   copyright: '@copyright by. Pak GuruAI',
   tahunAjaranAktif: '2026/2027',
   semesterAktif: 'Ganjil',
@@ -237,6 +241,58 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const registerGuru = async (data: Partial<User>) => {
+    const res = await api.register(data);
+    if (res.success && res.user) {
+      showNotification(res.message || 'Pendaftaran akun guru berhasil!', 'success');
+      await refreshAll();
+      // Auto login the newly registered teacher
+      if (data.username && data.password) {
+        await login(data.username, data.password);
+      }
+      return { success: true };
+    } else {
+      showNotification(res.message || 'Gagal melakukan pendaftaran guru.', 'error');
+      return { success: false, message: res.message };
+    }
+  };
+
+  const addSekolahBinaan = async (data: Partial<SekolahBinaan>) => {
+    const res = await api.createSekolah(data);
+    if (res.success) {
+      showNotification(`Sekolah binaan "${data.nama}" berhasil ditambahkan.`, 'success');
+      await refreshAll();
+      return true;
+    } else {
+      showNotification(res.message || 'Gagal menambahkan sekolah binaan.', 'error');
+      return false;
+    }
+  };
+
+  const updateSekolahBinaan = async (id: string, data: Partial<SekolahBinaan>) => {
+    const res = await api.updateSekolah(id, data);
+    if (res.success) {
+      showNotification('Data sekolah binaan berhasil diperbarui.', 'success');
+      await refreshAll();
+      return true;
+    } else {
+      showNotification(res.message || 'Gagal memperbarui sekolah binaan.', 'error');
+      return false;
+    }
+  };
+
+  const deleteSekolahBinaan = async (id: string) => {
+    const res = await api.deleteSekolah(id);
+    if (res.success) {
+      showNotification('Sekolah binaan berhasil dihapus dari daftar.', 'info');
+      await refreshAll();
+      return true;
+    } else {
+      showNotification(res.message || 'Gagal menghapus sekolah binaan.', 'error');
+      return false;
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -268,6 +324,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addPortofolio,
         deletePortofolio,
         createUser,
+        registerGuru,
+        addSekolahBinaan,
+        updateSekolahBinaan,
+        deleteSekolahBinaan,
       }}
     >
       {children}

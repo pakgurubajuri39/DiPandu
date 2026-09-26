@@ -283,6 +283,12 @@ export const InstrumenKemendikbudView: React.FC = () => {
               <p><strong className="text-slate-700">Nama Guru:</strong> {selectedGuru?.nama}</p>
               <p className="font-mono mt-1"><strong className="text-slate-700">NIP:</strong> {selectedGuru?.nip || '-'}</p>
               <p className="mt-1"><strong className="text-slate-700">Mata Pelajaran:</strong> {selectedGuru?.mapel}</p>
+              <p className="mt-1">
+                <strong className="text-slate-700">Asal Satuan Pendidikan:</strong>{' '}
+                <span className="font-semibold text-indigo-900 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200/80">
+                  {selectedGuru?.sekolah || settings.institutionName}
+                </span>
+              </p>
             </div>
             <div>
               <p><strong className="text-slate-700">Pengawas Penelaah:</strong> {settings.pengawasPembina}</p>
@@ -451,6 +457,9 @@ export const InstrumenKemendikbudView: React.FC = () => {
                   </h2>
                   <p className="text-xs text-slate-600 mt-0.5">
                     Perdirjen GTK No. 7607/B.B1/HK.03/2023 · Pengelolaan Praktik Kinerja Guru Kurikulum Merdeka
+                  </p>
+                  <p className="text-[11px] font-medium text-slate-600 mt-1">
+                    Guru: <strong className="text-slate-900">{selectedGuru?.nama}</strong> ({selectedGuru?.mapel}) · Satuan Pendidikan: <span className="font-semibold text-indigo-900">{selectedGuru?.sekolah || settings.institutionName}</span>
                   </p>
                 </div>
               </div>

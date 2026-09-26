@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import * as XLSX from 'xlsx';
+import { User, UserRole, Observasi, Perencanaan, TindakLanjut, Portofolio, SekolahBinaan, AppSettings } from './src/types';
 import { createSupervisionReportPDF } from './src/services/pdfGenerator';
 import { createRekapSupervisiWorkbook } from './src/services/excelGenerator';
 
@@ -21,7 +22,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Initial State / In-Memory Database
 const state = {
   settings: {
-    institutionName: 'SMA Genesis Medicare',
+    institutionName: 'Sekolah Binaan H. Kusnandar, M.Si',
     copyright: '@copyright by. Pak GuruAI',
     tahunAjaranAktif: '2026/2027',
     semesterAktif: 'Ganjil',
@@ -45,7 +46,7 @@ const state = {
       nama: 'Dr. Hj. Siti Nurhasanah, M.Pd',
       nip: '19740815 199802 2 002',
       role: 'kepala_sekolah',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       mapel: 'Manajerial & Kepemimpinan Sekolah',
       username: 'kepsek',
       password: 'bajuri39',
@@ -57,7 +58,7 @@ const state = {
       nama: 'Ahmad Fauzi, S.Pd',
       nip: '19850210 201001 1 015',
       role: 'guru',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       mapel: 'Matematika',
       username: 'guru1',
       password: 'bajuri39',
@@ -69,7 +70,7 @@ const state = {
       nama: 'Dewi Lestari, S.Pd',
       nip: '19910624 201603 2 008',
       role: 'guru',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMAN 1 Jaya Mandiri',
       mapel: 'Biologi',
       username: 'guru2',
       password: 'bajuri39',
@@ -81,7 +82,7 @@ const state = {
       nama: 'Bambang Prakoso, M.Pd',
       nip: '19821105 200801 1 009',
       role: 'guru',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Bina Bangsa Nusantara',
       mapel: 'Fisika',
       username: 'guru3',
       password: 'bajuri39',
@@ -93,7 +94,7 @@ const state = {
       nama: 'Ratna Sari, S.Pd',
       nip: '19940318 201903 2 012',
       role: 'guru',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Harapan Cendekia',
       mapel: 'Bahasa Indonesia',
       username: 'guru4',
       password: 'bajuri39',
@@ -104,9 +105,9 @@ const state = {
   sekolahBinaan: [
     {
       id: 'sek-1',
-      nama: 'SMA Genesis Medicare',
+      nama: 'SMA Binaan Mandiri Sejahtera',
       npsn: '20271890',
-      alamat: 'Jl. K.H. Ahmad Dahlan No. 12, Kota Depok, Jawa Barat',
+      alamat: 'Jl. Pemuda Pendidikan No. 12, Kota Depok, Jawa Barat',
       kepalaSekolah: 'Dr. Hj. Siti Nurhasanah, M.Pd',
       jumlahGuru: 32,
       akreditasi: 'A (Unggul)',
@@ -122,12 +123,21 @@ const state = {
     },
     {
       id: 'sek-3',
-      nama: 'SMA Bina Bangsa Sejahtera',
+      nama: 'SMA Bina Bangsa Nusantara',
       npsn: '20239012',
       alamat: 'Jl. Merdeka Barat No. 88, Jawa Barat',
       kepalaSekolah: 'Endang Wahyuni, S.Pd, M.Si',
       jumlahGuru: 28,
       akreditasi: 'B (Baik)',
+    },
+    {
+      id: 'sek-4',
+      nama: 'SMA Harapan Cendekia',
+      npsn: '20256789',
+      alamat: 'Jl. Surya Kencana No. 19, Jawa Barat',
+      kepalaSekolah: 'H. Rusli Effendi, M.Pd',
+      jumlahGuru: 24,
+      akreditasi: 'A (Unggul)',
     },
   ],
   perencanaan: [
@@ -135,7 +145,7 @@ const state = {
       id: 'per-1',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       tahunAjaran: '2026/2027',
       jenisDokumen: 'Modul Ajar',
       judul: 'Modul Ajar Matematika Fase E: SPLDV & Matriks Kontekstual',
@@ -150,7 +160,7 @@ const state = {
       id: 'per-2',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       tahunAjaran: '2026/2027',
       jenisDokumen: 'ATP',
       judul: 'Alur Tujuan Pembelajaran (ATP) Matematika Fase E Kelas 10',
@@ -165,7 +175,7 @@ const state = {
       id: 'per-3',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       tahunAjaran: '2026/2027',
       jenisDokumen: 'KKTP',
       judul: 'Kriteria Ketercapaian Tujuan Pembelajaran (KKTP) Interval Nilai',
@@ -180,7 +190,7 @@ const state = {
       id: 'per-4',
       guruId: 'usr-guru-2',
       guruNama: 'Dewi Lestari, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMAN 1 Jaya Mandiri',
       tahunAjaran: '2026/2027',
       jenisDokumen: 'Modul Ajar',
       judul: 'Modul Ajar Biologi Fase F: Metabolisme Enzim dan Katabolisme',
@@ -195,7 +205,7 @@ const state = {
       id: 'per-5',
       guruId: 'usr-guru-3',
       guruNama: 'Bambang Prakoso, M.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Bina Bangsa Nusantara',
       tahunAjaran: '2026/2027',
       jenisDokumen: 'Modul Ajar',
       judul: 'Modul Ajar Fisika Fase F: Dinamika Rotasi & Kesetimbangan',
@@ -210,7 +220,7 @@ const state = {
       id: 'per-6',
       guruId: 'usr-guru-4',
       guruNama: 'Ratna Sari, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Harapan Cendekia',
       tahunAjaran: '2026/2027',
       jenisDokumen: 'CP',
       judul: 'Analisis Capaian Pembelajaran Bahasa Indonesia Elemen Menulis',
@@ -229,7 +239,7 @@ const state = {
       guruNama: 'Ahmad Fauzi, S.Pd',
       guruNip: '19850210 201001 1 015',
       guruMapel: 'Matematika',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       supervisorId: 'usr-admin',
       supervisorNama: 'H. Kusnandar, M.Si',
       tanggalObservasi: '2026-09-12',
@@ -256,7 +266,7 @@ const state = {
       guruNama: 'Dewi Lestari, S.Pd',
       guruNip: '19910624 201603 2 008',
       guruMapel: 'Biologi',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMAN 1 Jaya Mandiri',
       supervisorId: 'usr-admin',
       supervisorNama: 'H. Kusnandar, M.Si',
       tanggalObservasi: '2026-09-16',
@@ -283,7 +293,7 @@ const state = {
       guruNama: 'Bambang Prakoso, M.Pd',
       guruNip: '19821105 200801 1 009',
       guruMapel: 'Fisika',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Bina Bangsa Nusantara',
       supervisorId: 'usr-kepsek',
       supervisorNama: 'Dr. Hj. Siti Nurhasanah, M.Pd',
       tanggalObservasi: '2026-09-28',
@@ -311,7 +321,7 @@ const state = {
       observasiId: 'obs-1',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       rekomendasi: 'Mengembangkan instrumen asesmen formatif berbasis aplikasi digital interaktif dan membagikan praktik baik di MGMP Matematika SMA Kota.',
       bentukKegiatan: 'MGMP',
       targetSelesai: '2026-10-30',
@@ -323,7 +333,7 @@ const state = {
       observasiId: 'obs-2',
       guruId: 'usr-guru-2',
       guruNama: 'Dewi Lestari, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMAN 1 Jaya Mandiri',
       rekomendasi: 'Menyelesaikan modul pelatihan mandiri di Platform Merdeka Mengajar (PMM) topik Diferensiasi Pembelajaran dalam IPA.',
       bentukKegiatan: 'PMM',
       targetSelesai: '2026-11-15',
@@ -336,7 +346,7 @@ const state = {
       id: 'port-1',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       kategori: 'Sertifikat',
       judul: 'Sertifikat Pelatihan Nasional Pembelajaran Berdiferensiasi PMM (32 JP)',
       deskripsi: 'Kelulusan topik Pembelajaran Berdiferensiasi dengan predikat Sangat Baik dari Kemendikbudristek.',
@@ -349,7 +359,7 @@ const state = {
       id: 'port-2',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       kategori: 'KaryaSiswa',
       judul: 'Kompilasi Infografis Proyek Matematika Terapan: Analisis Anggaran Rumah Tangga',
       deskripsi: 'Hasil karya peserta didik kelas X-1 dalam menganalisis data keuangan menggunakan sistem persamaan linear.',
@@ -362,7 +372,7 @@ const state = {
       id: 'port-3',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       kategori: 'PTK',
       judul: 'Laporan PTK: Peningkatan Berpikir Kritis Siswa melalui Model PBL Berbantuan Geogebra',
       deskripsi: 'Laporan Penelitian Tindakan Kelas siklus 1 dan 2 yang dipresentasikan pada seminar ilmiah guru.',
@@ -375,7 +385,7 @@ const state = {
       id: 'port-4',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       kategori: 'P5',
       judul: 'Modul & Dokumentasi P5: Rekayasa dan Teknologi Filter Air Sederhana',
       deskripsi: 'Fasilitasi projek penguatan profil pelajar Pancasila tema Rekayasa Teknologi ramah lingkungan.',
@@ -388,7 +398,7 @@ const state = {
       id: 'port-5',
       guruId: 'usr-guru-2',
       guruNama: 'Dewi Lestari, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMAN 1 Jaya Mandiri',
       kategori: 'Sertifikat',
       judul: 'Sertifikat Bimbingan Teknis Laboratorium Biologi SMA Tingkat Provinsi',
       deskripsi: 'Pelatihan keselamatan kerja dan optimalisasi alat mikroskop digital di laboratorium sekolah.',
@@ -429,6 +439,42 @@ app.post('/api/auth/login', (req, res) => {
     success: true,
     user: userSafe,
     settings: state.settings,
+  });
+});
+
+// Register Guru Langsung dari Akses Login
+app.post('/api/auth/register', (req, res) => {
+  const { nama, nip, mapel, sekolah, username, password, kontak } = req.body;
+  if (!nama || !username || !password) {
+    return res.status(400).json({ success: false, message: 'Nama, username, dan password wajib diisi.' });
+  }
+
+  const existing = state.users.find(
+    (u) => u.username.toLowerCase() === username.trim().toLowerCase()
+  );
+  if (existing) {
+    return res.status(400).json({ success: false, message: 'Username sudah digunakan, silakan pilih username lain.' });
+  }
+
+  const newUser = {
+    id: `usr-guru-${Date.now()}`,
+    nama: nama.trim(),
+    nip: nip ? nip.trim() : '-',
+    role: 'guru' as const,
+    sekolah: sekolah ? sekolah.trim() : (state.sekolahBinaan[0]?.nama || state.settings.institutionName),
+    mapel: mapel ? mapel.trim() : 'Guru Mata Pelajaran',
+    username: username.trim(),
+    password: password.trim(),
+    avatar: '',
+    kontak: kontak ? kontak.trim() : '-',
+  };
+
+  state.users.push(newUser);
+  const { password: _, ...safe } = newUser;
+  return res.status(201).json({
+    success: true,
+    user: safe,
+    message: 'Pendaftaran akun guru berhasil! Anda dapat langsung masuk dengan akun baru.',
   });
 });
 
@@ -480,8 +526,50 @@ app.post('/api/users', (req, res) => {
   res.status(201).json({ success: true, user: safe });
 });
 
-// Sekolah Binaan
+// Sekolah Binaan CRUD
 app.get('/api/sekolah', (req, res) => {
+  res.json({ success: true, sekolahBinaan: state.sekolahBinaan });
+});
+
+app.post('/api/sekolah', (req, res) => {
+  const { nama, npsn, alamat, kepalaSekolah, jumlahGuru, akreditasi } = req.body;
+  if (!nama) {
+    return res.status(400).json({ success: false, message: 'Nama sekolah binaan wajib diisi.' });
+  }
+
+  const newSekolah = {
+    id: `sek-${Date.now()}`,
+    nama: nama.trim(),
+    npsn: npsn ? npsn.trim() : '-',
+    alamat: alamat ? alamat.trim() : 'Jawa Barat',
+    kepalaSekolah: kepalaSekolah ? kepalaSekolah.trim() : '-',
+    jumlahGuru: Number(jumlahGuru) || 24,
+    akreditasi: akreditasi || 'A (Unggul)',
+  };
+
+  state.sekolahBinaan.push(newSekolah);
+  res.status(201).json({ success: true, sekolah: newSekolah, sekolahBinaan: state.sekolahBinaan });
+});
+
+app.put('/api/sekolah/:id', (req, res) => {
+  const { id } = req.params;
+  const index = state.sekolahBinaan.findIndex((s) => s.id === id);
+  if (index === -1) {
+    return res.status(404).json({ success: false, message: 'Sekolah binaan tidak ditemukan.' });
+  }
+
+  state.sekolahBinaan[index] = {
+    ...state.sekolahBinaan[index],
+    ...req.body,
+    jumlahGuru: req.body.jumlahGuru ? Number(req.body.jumlahGuru) : state.sekolahBinaan[index].jumlahGuru,
+  };
+
+  res.json({ success: true, sekolah: state.sekolahBinaan[index], sekolahBinaan: state.sekolahBinaan });
+});
+
+app.delete('/api/sekolah/:id', (req, res) => {
+  const { id } = req.params;
+  state.sekolahBinaan = state.sekolahBinaan.filter((s) => s.id !== id);
   res.json({ success: true, sekolahBinaan: state.sekolahBinaan });
 });
 
@@ -584,7 +672,7 @@ app.post('/api/observasi', (req, res) => {
     guruNama: guru ? guru.nama : 'Guru Pendidik',
     guruNip: guru ? guru.nip : '-',
     guruMapel: guru ? guru.mapel : '-',
-    sekolah: guru ? guru.sekolah : state.settings.institutionName,
+    sekolah: req.body.sekolah || (guru ? guru.sekolah : state.settings.institutionName),
     supervisorId: supervisorId || 'usr-admin',
     supervisorNama: supervisor ? supervisor.nama : 'H. Kusnandar, M.Si',
     tanggalObservasi: tanggalObservasi || new Date().toISOString().split('T')[0],
@@ -797,7 +885,7 @@ app.get('/api/reports/pdf', (req, res) => {
     const tl = state.tindakLanjut.filter((t) => t.guruId === guru.id);
     const port = state.portofolio.filter((p) => p.guruId === guru.id);
 
-    const doc = createSupervisionReportPDF(guru, obs, per, tl, port, state.settings);
+    const doc = createSupervisionReportPDF(guru as User, obs as Observasi | undefined, per as Perencanaan[], tl as TindakLanjut[], port as Portofolio[], state.settings);
     const arrayBuffer = doc.output('arraybuffer');
     const buffer = Buffer.from(arrayBuffer);
 
@@ -818,13 +906,13 @@ app.get('/api/reports/pdf', (req, res) => {
 app.get('/api/reports/excel', (req, res) => {
   try {
     const wb = createRekapSupervisiWorkbook(
-      state.users,
-      state.observasi,
-      state.perencanaan,
-      state.tindakLanjut,
-      state.portofolio,
-      state.sekolahBinaan,
-      state.settings
+      state.users as User[],
+      state.observasi as Observasi[],
+      state.perencanaan as Perencanaan[],
+      state.tindakLanjut as TindakLanjut[],
+      state.portofolio as Portofolio[],
+      state.sekolahBinaan as SekolahBinaan[],
+      state.settings as AppSettings
     );
     const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
     const fileName = `Rekapitulasi_Supervisi_Pengawas_${state.settings.tahunAjaranAktif.replace('/', '-')}.xlsx`;
@@ -851,7 +939,7 @@ app.post('/api/materials/generate', (req, res) => {
     });
   }
 
-  const institution = state.settings.institutionName || 'SMA Genesis Medicare';
+  const institution = state.settings.institutionName || 'Sekolah Binaan H. Kusnandar, M.Si';
 
   // Generate pedagogical content according to the requested strict structure
   const markdownOutput = `---

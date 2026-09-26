@@ -21,6 +21,7 @@ export const ObservasiView: React.FC = () => {
   const {
     currentUser,
     users,
+    settings,
     observasiList,
     addObservasi,
     submitRefleksi,
@@ -37,6 +38,7 @@ export const ObservasiView: React.FC = () => {
 
   // Input Rubrik Form State
   const [targetGuruId, setTargetGuruId] = useState(users.find((u) => u.role === 'guru')?.id || '');
+  const selectedGuruObj = users.find((u) => u.id === targetGuruId);
   const [tanggalObs, setTanggalObs] = useState(new Date().toISOString().split('T')[0]);
   const [jamObs, setJamObs] = useState('08:00 - 09:30 WIB');
   const [kelasObs, setKelasObs] = useState('X-1 (Fase E)');
@@ -87,6 +89,7 @@ export const ObservasiView: React.FC = () => {
 
     const success = await addObservasi({
       guruId: targetGuruId,
+      sekolah: selectedGuruObj?.sekolah || settings.institutionName,
       supervisorId: currentUser?.id,
       tanggalObservasi: tanggalObs,
       jamObservasi: jamObs,
@@ -225,6 +228,10 @@ export const ObservasiView: React.FC = () => {
                         <h3 className="text-sm font-bold text-slate-900 mt-0.5">{obs.guruNama}</h3>
                         <p className="text-xs text-slate-500 font-mono">
                           NIP: {obs.guruNip} · {obs.guruMapel}
+                        </p>
+                        <p className="text-xs text-indigo-700 font-semibold flex items-center gap-1.5 mt-1">
+                          <School className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                          <span>{obs.sekolah || users.find((u) => u.id === obs.guruId)?.sekolah || settings.institutionName}</span>
                         </p>
                       </div>
 
@@ -365,6 +372,23 @@ export const ObservasiView: React.FC = () => {
                       </option>
                     ))}
                 </select>
+
+                {/* Box Identitas Guru Yang Diobservasi */}
+                {selectedGuruObj && (
+                  <div className="mt-2.5 p-3 rounded-xl bg-indigo-50/70 border border-indigo-200/80 text-xs space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-900">{selectedGuruObj.nama}</span>
+                      <span className="text-[10px] font-mono text-slate-500">NIP: {selectedGuruObj.nip || '-'}</span>
+                    </div>
+                    <div className="flex flex-col gap-0.5 text-[11px] text-slate-600">
+                      <div className="flex items-center gap-1.5 font-semibold text-indigo-900">
+                        <School className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                        <span>Asal Sekolah: {selectedGuruObj.sekolah || settings.institutionName}</span>
+                      </div>
+                      <span className="text-slate-500">Mata Pelajaran: <strong className="text-slate-700">{selectedGuruObj.mapel}</strong></span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>

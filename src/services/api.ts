@@ -22,7 +22,7 @@ const fallbackSeed: {
   portofolio: Portofolio[];
 } = {
   settings: {
-    institutionName: 'SMA Genesis Medicare',
+    institutionName: 'Sekolah Binaan H. Kusnandar, M.Si',
     copyright: '@copyright by. Pak GuruAI',
     tahunAjaranAktif: '2026/2027',
     semesterAktif: 'Ganjil',
@@ -46,7 +46,7 @@ const fallbackSeed: {
       nama: 'Dr. Hj. Siti Nurhasanah, M.Pd',
       nip: '19740815 199802 2 002',
       role: 'kepala_sekolah' as const,
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       mapel: 'Manajerial & Kepemimpinan Sekolah',
       username: 'kepsek',
       password: 'bajuri39',
@@ -58,7 +58,7 @@ const fallbackSeed: {
       nama: 'Ahmad Fauzi, S.Pd',
       nip: '19850210 201001 1 015',
       role: 'guru' as const,
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       mapel: 'Matematika',
       username: 'guru1',
       password: 'bajuri39',
@@ -70,7 +70,7 @@ const fallbackSeed: {
       nama: 'Dewi Lestari, S.Pd',
       nip: '19910624 201603 2 008',
       role: 'guru' as const,
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMAN 1 Jaya Mandiri',
       mapel: 'Biologi',
       username: 'guru2',
       password: 'bajuri39',
@@ -82,7 +82,7 @@ const fallbackSeed: {
       nama: 'Bambang Prakoso, M.Pd',
       nip: '19821105 200801 1 009',
       role: 'guru' as const,
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Bina Bangsa Nusantara',
       mapel: 'Fisika',
       username: 'guru3',
       password: 'bajuri39',
@@ -94,7 +94,7 @@ const fallbackSeed: {
       nama: 'Ratna Sari, S.Pd',
       nip: '19940318 201903 2 012',
       role: 'guru' as const,
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Harapan Cendekia',
       mapel: 'Bahasa Indonesia',
       username: 'guru4',
       password: 'bajuri39',
@@ -105,9 +105,9 @@ const fallbackSeed: {
   sekolahBinaan: [
     {
       id: 'sek-1',
-      nama: 'SMA Genesis Medicare',
+      nama: 'SMA Binaan Mandiri Sejahtera',
       npsn: '20271890',
-      alamat: 'Jl. K.H. Ahmad Dahlan No. 12, Kota Depok, Jawa Barat',
+      alamat: 'Jl. Pemuda Pendidikan No. 12, Kota Depok, Jawa Barat',
       kepalaSekolah: 'Dr. Hj. Siti Nurhasanah, M.Pd',
       jumlahGuru: 32,
       akreditasi: 'A (Unggul)',
@@ -123,12 +123,21 @@ const fallbackSeed: {
     },
     {
       id: 'sek-3',
-      nama: 'SMA Bina Bangsa Sejahtera',
+      nama: 'SMA Bina Bangsa Nusantara',
       npsn: '20239012',
       alamat: 'Jl. Merdeka Barat No. 88, Jawa Barat',
       kepalaSekolah: 'Endang Wahyuni, S.Pd, M.Si',
       jumlahGuru: 28,
       akreditasi: 'B (Baik)',
+    },
+    {
+      id: 'sek-4',
+      nama: 'SMA Harapan Cendekia',
+      npsn: '20256789',
+      alamat: 'Jl. Surya Kencana No. 19, Jawa Barat',
+      kepalaSekolah: 'H. Rusli Effendi, M.Pd',
+      jumlahGuru: 24,
+      akreditasi: 'A (Unggul)',
     },
   ],
   perencanaan: [
@@ -136,7 +145,7 @@ const fallbackSeed: {
       id: 'per-1',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       tahunAjaran: '2026/2027',
       jenisDokumen: 'Modul Ajar' as const,
       judul: 'Modul Ajar Matematika Fase E: SPLDV & Matriks Kontekstual',
@@ -151,7 +160,7 @@ const fallbackSeed: {
       id: 'per-2',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       tahunAjaran: '2026/2027',
       jenisDokumen: 'ATP' as const,
       judul: 'Alur Tujuan Pembelajaran (ATP) Matematika Fase E Kelas 10',
@@ -166,7 +175,7 @@ const fallbackSeed: {
       id: 'per-3',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       tahunAjaran: '2026/2027',
       jenisDokumen: 'KKTP' as const,
       judul: 'Kriteria Ketercapaian Tujuan Pembelajaran (KKTP) Interval Nilai',
@@ -181,7 +190,7 @@ const fallbackSeed: {
       id: 'per-4',
       guruId: 'usr-guru-2',
       guruNama: 'Dewi Lestari, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMAN 1 Jaya Mandiri',
       tahunAjaran: '2026/2027',
       jenisDokumen: 'Modul Ajar' as const,
       judul: 'Modul Ajar Biologi Fase F: Metabolisme Enzim dan Katabolisme',
@@ -200,7 +209,7 @@ const fallbackSeed: {
       guruNama: 'Ahmad Fauzi, S.Pd',
       guruNip: '19850210 201001 1 015',
       guruMapel: 'Matematika',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       supervisorId: 'usr-admin',
       supervisorNama: 'H. Kusnandar, M.Si',
       tanggalObservasi: '2026-09-12',
@@ -227,7 +236,7 @@ const fallbackSeed: {
       guruNama: 'Dewi Lestari, S.Pd',
       guruNip: '19910624 201603 2 008',
       guruMapel: 'Biologi',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMAN 1 Jaya Mandiri',
       supervisorId: 'usr-admin',
       supervisorNama: 'H. Kusnandar, M.Si',
       tanggalObservasi: '2026-09-16',
@@ -255,7 +264,7 @@ const fallbackSeed: {
       observasiId: 'obs-1',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       rekomendasi: 'Mengembangkan instrumen asesmen formatif berbasis aplikasi digital interaktif dan membagikan praktik baik di MGMP Matematika SMA Kota.',
       bentukKegiatan: 'MGMP' as const,
       targetSelesai: '2026-10-30',
@@ -267,7 +276,7 @@ const fallbackSeed: {
       observasiId: 'obs-2',
       guruId: 'usr-guru-2',
       guruNama: 'Dewi Lestari, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMAN 1 Jaya Mandiri',
       rekomendasi: 'Menyelesaikan modul pelatihan mandiri di Platform Merdeka Mengajar (PMM) topik Diferensiasi Pembelajaran dalam IPA.',
       bentukKegiatan: 'PMM' as const,
       targetSelesai: '2026-11-15',
@@ -280,7 +289,7 @@ const fallbackSeed: {
       id: 'port-1',
       guruId: 'usr-guru-1',
       guruNama: 'Ahmad Fauzi, S.Pd',
-      sekolah: 'SMA Genesis Medicare',
+      sekolah: 'SMA Binaan Mandiri Sejahtera',
       kategori: 'Sertifikat' as const,
       judul: 'Sertifikat Pelatihan Nasional Pembelajaran Berdiferensiasi PMM (32 JP)',
       deskripsi: 'Kelulusan topik Pembelajaran Berdiferensiasi dengan predikat Sangat Baik dari Kemendikbudristek.',
@@ -322,6 +331,44 @@ export const api = {
     }
 
     return { success: false, message: 'Username atau password salah! (Password admin: pakhaji)' };
+  },
+
+  async register(data: Partial<User>): Promise<{ success: boolean; user?: User; message?: string }> {
+    try {
+      const res = await fetch(`${BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+      const errData = await res.json().catch(() => null);
+      if (errData && errData.message) {
+        return { success: false, message: errData.message };
+      }
+    } catch {}
+
+    const username = (data.username || '').trim();
+    if (fallbackSeed.users.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
+      return { success: false, message: 'Username sudah digunakan. Silakan gunakan username lain.' };
+    }
+
+    const newUser: User = {
+      id: `usr-guru-${Date.now()}`,
+      nama: data.nama || 'Guru Pendidik',
+      nip: data.nip || '-',
+      role: 'guru',
+      sekolah: data.sekolah || fallbackSeed.settings.institutionName,
+      mapel: data.mapel || 'Guru Mata Pelajaran',
+      username: username || `guru_${Date.now()}`,
+      password: data.password || 'bajuri39',
+      avatar: '',
+      kontak: data.kontak || '-',
+    };
+    fallbackSeed.users.push(newUser);
+    const { password: _, ...safe } = newUser;
+    return { success: true, user: safe, message: 'Pendaftaran guru berhasil!' };
   },
 
   // Settings
@@ -388,6 +435,62 @@ export const api = {
       const res = await fetch(`${BASE_URL}/sekolah`);
       if (res.ok) return await res.json();
     } catch {}
+    return { success: true, sekolahBinaan: fallbackSeed.sekolahBinaan };
+  },
+
+  async createSekolah(data: Partial<SekolahBinaan>): Promise<{ success: boolean; sekolah?: SekolahBinaan; sekolahBinaan?: SekolahBinaan[]; message?: string }> {
+    try {
+      const res = await fetch(`${BASE_URL}/sekolah`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) return await res.json();
+    } catch {}
+
+    const newSek: SekolahBinaan = {
+      id: `sek-${Date.now()}`,
+      nama: data.nama || 'Sekolah Binaan Baru',
+      npsn: data.npsn || '-',
+      alamat: data.alamat || 'Jawa Barat',
+      kepalaSekolah: data.kepalaSekolah || '-',
+      jumlahGuru: Number(data.jumlahGuru) || 20,
+      akreditasi: data.akreditasi || 'A (Unggul)',
+    };
+    fallbackSeed.sekolahBinaan.push(newSek);
+    return { success: true, sekolah: newSek, sekolahBinaan: fallbackSeed.sekolahBinaan };
+  },
+
+  async updateSekolah(id: string, data: Partial<SekolahBinaan>): Promise<{ success: boolean; sekolah?: SekolahBinaan; sekolahBinaan?: SekolahBinaan[]; message?: string }> {
+    try {
+      const res = await fetch(`${BASE_URL}/sekolah/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) return await res.json();
+    } catch {}
+
+    const idx = fallbackSeed.sekolahBinaan.findIndex((s) => s.id === id);
+    if (idx !== -1) {
+      fallbackSeed.sekolahBinaan[idx] = {
+        ...fallbackSeed.sekolahBinaan[idx],
+        ...data,
+      };
+      return { success: true, sekolah: fallbackSeed.sekolahBinaan[idx], sekolahBinaan: fallbackSeed.sekolahBinaan };
+    }
+    return { success: false, message: 'Sekolah binaan tidak ditemukan' };
+  },
+
+  async deleteSekolah(id: string): Promise<{ success: boolean; sekolahBinaan?: SekolahBinaan[]; message?: string }> {
+    try {
+      const res = await fetch(`${BASE_URL}/sekolah/${id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) return await res.json();
+    } catch {}
+
+    fallbackSeed.sekolahBinaan = fallbackSeed.sekolahBinaan.filter((s) => s.id !== id);
     return { success: true, sekolahBinaan: fallbackSeed.sekolahBinaan };
   },
 
